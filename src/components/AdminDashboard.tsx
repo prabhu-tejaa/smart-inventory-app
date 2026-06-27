@@ -198,14 +198,14 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
           </div>
         </div>
         
-        <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto">
+        <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto min-h-0">
           {[
             { id: 'users', icon: Users, label: 'Manage Users' }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm whitespace-nowrap ${
+              className={`w-auto md:w-full shrink-0 flex items-center justify-center md:justify-start gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm whitespace-nowrap ${
                 activeTab === tab.id 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
                   : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
