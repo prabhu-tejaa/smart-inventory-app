@@ -69,7 +69,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
         {/* Minimal Static Text */}
         <div className="relative z-10 w-full max-w-xl">
           <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight">
-            Smart Inventory App,<br/>
+            Smart Inventory,<br/>
             <motion.span 
               animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
@@ -200,6 +200,10 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
             </button>
           </motion.div>
         </div>
+      </div>
+
+      <div className="absolute bottom-6 left-0 right-0 text-center text-[11px] text-slate-400 font-sans tracking-wide">
+        &copy; {new Date().getFullYear()} Smart Inventory App
       </div>
     </div>
   );

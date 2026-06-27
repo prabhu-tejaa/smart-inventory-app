@@ -1193,12 +1193,6 @@ export default function App() {
         </div>
 
       </main>
-
-      <footer className="shrink-0 hidden bg-white border-t border-[#e2e8f0] py-3.5 text-center text-[11px] text-slate-400 font-sans md:flex flex-col md:flex-row md:items-center md:justify-center px-6 gap-2">
-        <span className="font-sans">
-          &copy; 2026 Smart Inventory App
-        </span>
-      </footer>
       </>
       )}
     </div>
