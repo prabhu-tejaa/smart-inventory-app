@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Lock, Mail, UserPlus, LogIn, AlertTriangle } from 'lucide-react';
+import { Package, Lock, Mail, UserPlus, LogIn, AlertTriangle, TrendingUp, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AuthProps {
@@ -52,104 +52,185 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div className="p-8 text-center bg-slate-900 text-white relative">
-          <div className="w-16 h-16 bg-white/10 rounded-2xl mx-auto flex items-center justify-center backdrop-blur-md mb-4 shadow-inner border border-white/20">
-            <Package className="w-8 h-8 text-indigo-300" />
-          </div>
-          <h2 className="text-2xl font-display font-bold tracking-tight">Smart Inventory</h2>
-          <p className="text-indigo-200 text-sm mt-2 opacity-90 font-medium">Secure Access Portal</p>
+    <div className="min-h-screen bg-slate-50 flex">
+      
+      {/* LEFT COLUMN: BRANDING & ANIMATION */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#0a0f1c] relative overflow-hidden items-center justify-center p-12 lg:p-20 border-r border-slate-800">
+        
+        {/* Animated Abstract Background */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <motion.div 
+            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
+          />
+          <motion.div 
+            animate={{ rotate: -360, scale: [1, 1.2, 1] }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"
+          />
         </div>
 
-        <div className="p-8">
+        {/* Branding Content */}
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="z-10 relative text-white max-w-lg w-full"
+        >
+          <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center backdrop-blur-md mb-8 border border-indigo-400/30 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
+            <Package className="w-8 h-8 text-indigo-300" />
+          </div>
+          
+          <h1 className="text-4xl lg:text-5xl font-display font-bold mb-6 tracking-tight leading-tight">
+            Next-Gen <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Inventory</span> Intelligence.
+          </h1>
+          
+          <p className="text-slate-400 text-lg mb-10 leading-relaxed font-light">
+            Seamlessly track your shelf stock, anticipate expiring goods, and monitor daily sales with our hybrid-cloud secure architecture. Built exclusively for modern shopkeepers.
+          </p>
+          
+          {/* Animated Features List */}
+          <div className="space-y-5">
+            {[
+              { icon: Package, text: 'Real-time stock tracking & low-stock alerts' },
+              { icon: TrendingUp, text: 'Advanced profit margin & sales analytics' },
+              { icon: ShieldCheck, text: 'Military-grade multi-tenant database isolation' },
+            ].map((feature, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + (idx * 0.15) }}
+                className="flex items-center gap-4 text-slate-300"
+              >
+                <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner">
+                  <feature.icon className="w-4 h-4 text-indigo-400" />
+                </div>
+                <span className="font-medium text-[15px]">{feature.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* RIGHT COLUMN: AUTHENTICATION FORM */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white relative">
+        <div className="max-w-md w-full">
+          
+          {/* Mobile-only branding header */}
+          <div className="lg:hidden text-center mb-8">
+            <div className="w-14 h-14 bg-slate-900 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg">
+              <Package className="w-7 h-7 text-white" />
+            </div>
+            <h2 className="text-2xl font-display font-bold tracking-tight text-slate-900">Smart Inventory</h2>
+            <p className="text-slate-500 text-sm mt-1 font-medium">Secure Access Portal</p>
+          </div>
+
+          <div className="mb-8 hidden lg:block">
+            <h2 className="text-3xl font-display font-bold tracking-tight text-slate-900 mb-2">
+              {isLogin ? 'Welcome back' : 'Create an account'}
+            </h2>
+            <p className="text-slate-500">
+              {isLogin ? 'Enter your credentials to access your dashboard.' : 'Sign up to start managing your inventory.'}
+            </p>
+          </div>
+
           <AnimatePresence>
             {error && (
               <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex items-start gap-2.5 shadow-sm"
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 text-sm rounded-xl flex items-start gap-3 shadow-sm"
               >
-                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>{error}</span>
+                <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0 text-red-500" />
+                <span className="leading-relaxed">{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <motion.div layout>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Email or Username</label>
+              <div className="relative group">
+                <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-indigo-500" />
                 <input 
                   type="text" 
                   required 
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-sm"
-                  placeholder="Email or Username"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all shadow-sm font-medium text-slate-900"
+                  placeholder="admin"
                 />
               </div>
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+            <motion.div layout>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
+              <div className="relative group">
+                <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-indigo-500" />
                 <input 
                   type="password" 
                   required 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-sm"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all shadow-sm font-medium text-slate-900"
                   placeholder="••••••••"
                 />
               </div>
-            </div>
+            </motion.div>
 
-            {!isLogin && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Confirm Password</label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
-                  <input 
-                    type="password" 
-                    required 
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-sm"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {!isLogin && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="overflow-hidden"
+                >
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Confirm Password</label>
+                  <div className="relative group">
+                    <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 transition-colors group-focus-within:text-indigo-500" />
+                    <input 
+                      type="password" 
+                      required 
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all shadow-sm font-medium text-slate-900"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <button 
+            <motion.button 
+              layout
               type="submit" 
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] transition-all text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 text-[15px]"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : isLogin ? (
-                <><LogIn className="w-4 h-4" /> Sign In</>
+                <><LogIn className="w-5 h-5" /> Sign In to Workspace</>
               ) : (
-                <><UserPlus className="w-4 h-4" /> Create Account</>
+                <><UserPlus className="w-5 h-5" /> Initialize Account</>
               )}
-            </button>
+            </motion.button>
           </form>
 
-          <div className="mt-8 text-center text-sm text-slate-500">
+          <motion.div layout className="mt-10 text-center text-sm text-slate-500 font-medium">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button 
               type="button" 
               onClick={() => { setIsLogin(!isLogin); setError(''); }}
-              className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
             >
               {isLogin ? "Sign up here" : "Sign in here"}
             </button>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
