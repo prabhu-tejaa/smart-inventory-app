@@ -177,7 +177,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
               layout
               type="submit" 
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 text-[15px]"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 text-[15px] cursor-pointer"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -194,7 +194,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
             <button 
               type="button" 
               onClick={() => { setIsLogin(!isLogin); setError(''); }}
-              className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
             >
               {isLogin ? "Sign up here" : "Sign in here"}
             </button>
