@@ -68,17 +68,9 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
 
         {/* Minimal Static Text */}
         <div className="relative z-10 w-full max-w-xl">
-          <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-8 border border-indigo-500/20">
-            <Package className="w-6 h-6 text-indigo-400" />
-          </div>
-          
-          <div className="font-mono text-indigo-400 mb-4 text-sm font-semibold tracking-widest uppercase">
-            System Ready
-          </div>
-          
           <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight">
-            Inventory management,<br/>
-            <span className="text-slate-400 font-light">reduced to the essentials.</span>
+            Smart Inventory App,<br/>
+            <span className="text-slate-400 font-light">track all your products.</span>
           </h1>
           
 
@@ -103,7 +95,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
 
           <div className="mb-8 hidden lg:block">
             <h2 className="text-3xl font-display font-bold tracking-tight text-slate-900 mb-2">
-              {isLogin ? 'Welcome back' : 'Create an account'}
+              {isLogin ? 'Access Workspace' : 'Create an account'}
             </h2>
             <p className="text-slate-500">
               {isLogin ? 'Enter your credentials to access your dashboard.' : 'Sign up to start managing your inventory.'}
@@ -135,7 +127,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white transition-all shadow-sm font-medium text-slate-900"
-                  placeholder="admin"
+                  placeholder="Enter email or username"
                 />
               </div>
             </motion.div>

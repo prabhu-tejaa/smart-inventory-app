@@ -410,11 +410,11 @@ export default function App() {
 
       {/* HEADER BAR (Height: 60px as strictly requested) */}
       <header className="h-[60px] max-h-[60px] shrink-0 bg-white border-b border-[#e2e8f0] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <div className="p-1 px-1.5 rounded-md bg-slate-900 text-white flex items-center justify-center">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
             <Package className="w-5 h-5" />
           </div>
-          <span className="font-display font-medium tracking-tight text-slate-900 text-base md:text-lg">
+          <span className="font-display font-bold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 bg-clip-text text-transparent text-lg md:text-xl">
             Smart Inventory
           </span>
         </div>
@@ -428,9 +428,6 @@ export default function App() {
               <ShieldAlert className="w-4 h-4" /> Admin Console
             </button>
           )}
-          <div className="text-xs font-semibold text-slate-700 flex items-center gap-1 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200">
-            <User className="w-4 h-4" /> {user.email}
-          </div>
           <button onClick={handleLogout} className="text-xs font-semibold text-slate-500 flex items-center gap-1 hover:text-slate-800">
             <LogOut className="w-4 h-4" /> Logout
           </button>
@@ -1191,17 +1188,10 @@ export default function App() {
 
       </main>
 
-      {/* FOOTER CLAYMORE CREDITS */}
-      <footer className="shrink-0 bg-white border-t border-[#e2e8f0] py-3.5 text-center text-[11px] text-slate-400 font-sans flex flex-col md:flex-row md:items-center md:justify-between px-6 gap-2">
+      <footer className="shrink-0 bg-white border-t border-[#e2e8f0] py-3.5 text-center text-[11px] text-slate-400 font-sans flex flex-col md:flex-row md:items-center md:justify-center px-6 gap-2">
         <span className="font-sans">
-          &copy; 2026 Smart Inventory Suite - India Shopkeeper Edition. Secure & Offline resilient.
+          &copy; 2026 Smart Inventory App
         </span>
-        <div className="flex items-center justify-center gap-4 text-slate-500 font-medium text-xs">
-          <span className="flex items-center gap-1 text-[11px]" title="Hybrid Mongo + JSON system">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#15803d]" />
-            Resilient Live Engine
-          </span>
-        </div>
       </footer>
       </>
       )}
