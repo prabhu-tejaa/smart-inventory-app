@@ -378,55 +378,16 @@ export default function App() {
             <Package className="w-5 h-5" />
           </div>
           <span className="font-display font-medium tracking-tight text-slate-900 text-base md:text-lg">
-            Smart Inventory & Expiry Engine
+            Smart Inventory
           </span>
         </div>
 
-        {/* Database Connection Status Badges */}
-        <div className="hidden lg:flex items-center gap-2.5 text-xs">
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${
-            dbStatus.connected 
-              ? "bg-[#f0fdf4] text-[#15803d] border-[#dcfce7]" 
-              : "bg-amber-50 text-amber-700 border-amber-200"
-          }`}>
-            <Database className="w-3.5 h-3.5 animate-pulse" />
-            <span className="font-mono text-xs font-semibold">{dbStatus.connected ? "MONGODB ATLAS ONLINE" : "HYBRID OFFLINE MODE"}</span>
-          </div>
-          <span className="text-[11px] text-slate-400 font-medium max-w-xs truncate" title={dbStatus.info}>
-            {dbStatus.info}
-          </span>
-        </div>
-
-        {/* Live Date Anchor Indicator / Clock */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-mono bg-slate-100 py-1 px-2.5 rounded-md text-slate-600">
-            <Calendar className="w-3.5 h-3.5 opacity-70" />
-            <span>2026-06-27</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-mono bg-slate-900 py-1 px-2.5 rounded-md text-slate-200">
-            <Clock className="w-3.5 h-3.5 text-indigo-400" />
-            <span>{liveTime} UTC</span>
-          </div>
-        </div>
       </header>
 
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-auto">
         
-        {/* DATABASE MODE MOBILE OVERLAY FLAG */}
-        <div className="lg:hidden w-full flex items-center justify-between bg-white border border-[#e2e8f0] px-4 py-2.5 rounded-xl shadow-2xs">
-          <div className="flex items-center gap-1.5">
-            <Database className={`w-4 h-4 ${dbStatus.connected ? "text-green-500" : "text-amber-500 animate-pulse"}`} />
-            <span className="text-xs font-mono font-medium text-slate-600">{dbStatus.mode}</span>
-          </div>
-          <button 
-            onClick={() => { fetchDBStatus(); fetchInventory(); }}
-            className="p-1 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-            title="Refresh database state"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {/* MOBILE OVERLAY REMOVED FOR PROD */}
 
         {/* DYNAMIC EXPIRY & STOCK WARNING DRAWER Banner */}
         <AnimatePresence>
@@ -950,9 +911,6 @@ export default function App() {
                           onChange={(e) => setNewProduct({ ...newProduct, expiryDate: e.target.value })}
                           className="w-full bg-white text-xs border border-slate-200 p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
                         />
-                        <div className="p-2 border border-blue-100 bg-blue-50/50 rounded-lg text-[10px] text-blue-800 flex items-start gap-1 justify-between font-medium mt-1">
-                          <span>📅 Realtime calculations are anchored against today: <b>2026-06-27</b>.</span>
-                        </div>
                       </div>
 
                       <button
