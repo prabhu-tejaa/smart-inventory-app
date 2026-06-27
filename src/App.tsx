@@ -15,10 +15,14 @@ import {
   FileText, 
   ChevronRight,
   Filter,
-  RefreshCw
+  RefreshCw,
+  User,
+  LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Product, Sale, DBStatus } from './types';
+import Auth from './components/Auth';
+import Profile from './components/Profile';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
