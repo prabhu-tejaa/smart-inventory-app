@@ -184,19 +184,19 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
   const totalProfit = sales.reduce((sum, sale) => sum + sale.profit, 0);
 
   return (
-    <div className="min-h-screen md:h-screen md:max-h-screen w-full flex flex-col md:flex-row bg-slate-50 md:overflow-hidden font-sans">
+    <div className="flex-1 min-h-0 w-full flex flex-col md:flex-row bg-slate-50 md:overflow-hidden font-sans">
       
       {/* Sidebar Navigation */}
       <div className="w-full md:w-72 bg-[#0a0f1c] text-white flex flex-col shadow-2xl z-20 shrink-0">
-        <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-            <ShieldAlert className="w-5 h-5 text-indigo-400" />
+        <button onClick={onExit} className="p-6 border-b border-slate-800 flex items-center gap-3 w-full text-left hover:bg-slate-800/50 transition-colors group cursor-pointer shrink-0">
+          <div className="w-10 h-10 bg-indigo-500/20 group-hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors shadow-sm">
+            <ArrowLeft className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
           </div>
           <div>
-            <h2 className="font-display font-bold text-lg leading-tight">Admin Console</h2>
-            <p className="text-xs text-slate-400">Superuser Access</p>
+            <h2 className="font-display font-bold text-lg leading-tight group-hover:text-indigo-300 transition-colors">Return to App</h2>
+            <p className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">Exit Admin Console</p>
           </div>
-        </div>
+        </button>
         
         <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto min-h-0">
           {[
@@ -217,14 +217,7 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
-          <button 
-            onClick={onExit}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors text-sm font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" /> Return to Dashboard
-          </button>
-        </div>
+
       </div>
 
       {/* Main Content Area */}
@@ -254,8 +247,8 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-900"><Users className="w-5 h-5"/> Register New User</h3>
                   <form onSubmit={handleAddUser} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                     <div className="sm:col-span-1">
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Email Address</label>
-                      <input type="email" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Username / Email</label>
+                      <input type="text" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
                     </div>
                     <div className="sm:col-span-1">
                       <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Password</label>
@@ -281,8 +274,8 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-900"><Edit2 className="w-5 h-5"/> Edit User</h3>
                   <form onSubmit={handleEditUser} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
                     <div className="sm:col-span-1">
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Email Address</label>
-                      <input type="email" value={editingUser.email} onChange={e => setEditingUser({...editingUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Username / Email</label>
+                      <input type="text" value={editingUser.email} onChange={e => setEditingUser({...editingUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
                     </div>
                     <div className="sm:col-span-1">
                       <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">New Password (Optional)</label>
@@ -305,9 +298,9 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
 
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
                 <table className="w-full text-sm text-left min-w-[600px]">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
-                    <tr>
-                      <th className="px-6 py-4">Account Email</th>
+                  <thead>
+                  <tr className="border-b border-slate-100 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                    <th className="py-3 px-4">Account ID</th>
                       <th className="px-6 py-4">Role</th>
                       <th className="px-6 py-4">Joined Date</th>
                       <th className="px-6 py-4 text-right">Actions</th>

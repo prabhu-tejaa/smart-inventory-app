@@ -413,12 +413,7 @@ export default function App() {
       <header className="h-[60px] max-h-[60px] shrink-0 bg-white border-b border-[#e2e8f0] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-sm">
-            <motion.div
-              animate={{ y: [0, -2, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <Package className="w-5 h-5" />
-            </motion.div>
+            <Package className="w-5 h-5" />
           </div>
           <span className="font-display font-bold tracking-tight text-slate-900 text-lg md:text-xl">
             Smart Inventory
@@ -854,7 +849,7 @@ export default function App() {
             </div>
 
             {/* TAB PANEL CONTENTS */}
-            <div className="flex-1 p-4 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" id="interactive-command-tab-panel">
+            <div className="flex-1 p-4 overflow-y-auto min-h-0" id="interactive-command-tab-panel">
               <AnimatePresence mode="wait">
                 
                 {/* TAB 1: ADD PRODUCT BATCH ENTRY */}
