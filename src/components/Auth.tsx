@@ -52,13 +52,15 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="h-screen max-h-screen overflow-hidden bg-slate-50 flex">
       
-      {/* LEFT COLUMN: BRANDING & ANIMATION */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0a0f1c] relative overflow-hidden items-center justify-center p-12 lg:p-20 border-r border-slate-800">
+      {/* LEFT COLUMN: BRANDING & INTERACTIVE ANIMATION (60% width) */}
+      <div className="hidden lg:flex lg:w-[60%] bg-[#0a0f1c] relative overflow-hidden items-center justify-center p-12 xl:p-20 border-r border-slate-800">
         
-        {/* Animated Abstract Background */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {/* Animated Abstract Background Grid & Glows */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f46e511_1px,transparent_1px),linear-gradient(to_bottom,#4f46e511_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+          
           <motion.div 
             animate={{ rotate: 360, scale: [1, 1.1, 1] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -67,56 +69,90 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
           <motion.div 
             animate={{ rotate: -360, scale: [1, 1.2, 1] }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"
+            className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/10 to-teal-500/10 rounded-full blur-3xl"
           />
         </div>
+
+        {/* Floating Mock UI Elements for "Life" */}
+        <motion.div 
+          animate={{ y: [-10, 10, -10] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute right-10 top-20 bg-slate-900/80 backdrop-blur-md border border-slate-700 p-4 rounded-2xl shadow-2xl z-0 w-64 hidden xl:block"
+        >
+          <div className="flex justify-between items-start mb-3">
+            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-indigo-400" />
+            </div>
+            <span className="text-xs font-semibold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">+24.5%</span>
+          </div>
+          <p className="text-slate-400 text-xs mb-1">Today's Profit</p>
+          <h4 className="text-white font-display font-bold text-xl">₹12,450</h4>
+        </motion.div>
+
+        <motion.div 
+          animate={{ y: [10, -10, 10] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute right-20 bottom-32 bg-slate-900/80 backdrop-blur-md border border-slate-700 p-4 rounded-2xl shadow-2xl z-0 w-64 hidden xl:block"
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+            <p className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Low Stock Alert</p>
+          </div>
+          <div className="flex justify-between items-center bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
+            <span className="text-slate-300 text-sm">Fortune Oil 1L</span>
+            <span className="text-amber-400 font-mono font-bold">2 left</span>
+          </div>
+        </motion.div>
 
         {/* Branding Content */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="z-10 relative text-white max-w-lg w-full"
+          className="z-10 relative text-white max-w-xl w-full"
         >
-          <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center backdrop-blur-md mb-8 border border-indigo-400/30 shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-            <Package className="w-8 h-8 text-indigo-300" />
+          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-500/20">
+            <Package className="w-8 h-8 text-white" />
           </div>
           
-          <h1 className="text-4xl lg:text-5xl font-display font-bold mb-6 tracking-tight leading-tight">
-            Next-Gen <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Inventory</span> Intelligence.
+          <h1 className="text-5xl xl:text-6xl font-display font-extrabold mb-6 tracking-tight leading-[1.1]">
+            Run your store like a <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">pro.</span>
           </h1>
           
-          <p className="text-slate-400 text-lg mb-10 leading-relaxed font-light">
-            Seamlessly track your shelf stock, anticipate expiring goods, and monitor daily sales with our hybrid-cloud secure architecture. Built exclusively for modern shopkeepers.
+          <p className="text-slate-300 text-lg mb-10 leading-relaxed font-light max-w-lg">
+            Say goodbye to messy notebooks and guesswork. Smart Inventory tracks what sells, warns you before things expire, and protects your data—so you can focus on growing your business.
           </p>
           
           {/* Animated Features List */}
-          <div className="space-y-5">
+          <div className="space-y-6">
             {[
-              { icon: Package, text: 'Real-time stock tracking & low-stock alerts' },
-              { icon: TrendingUp, text: 'Advanced profit margin & sales analytics' },
-              { icon: ShieldCheck, text: 'Military-grade multi-tenant database isolation' },
+              { icon: Package, title: 'Never run out of stock', text: 'Get instantly notified before popular items hit zero.' },
+              { icon: TrendingUp, title: 'See your real profits', text: 'Know exactly how much money you made today, down to the rupee.' },
+              { icon: ShieldCheck, title: 'Your data is locked down', text: 'Bank-level security ensures nobody else sees your inventory.' },
             ].map((feature, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + (idx * 0.15) }}
-                className="flex items-center gap-4 text-slate-300"
+                className="flex items-start gap-4 text-slate-300 group"
               >
-                <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner">
-                  <feature.icon className="w-4 h-4 text-indigo-400" />
+                <div className="w-12 h-12 rounded-xl bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors shrink-0">
+                  <feature.icon className="w-5 h-5 text-indigo-400" />
                 </div>
-                <span className="font-medium text-[15px]">{feature.text}</span>
+                <div>
+                  <h4 className="font-semibold text-white text-[15px] mb-1">{feature.title}</h4>
+                  <p className="text-slate-400 text-sm leading-relaxed">{feature.text}</p>
+                </div>
               </motion.div>
             ))}
           </div>
         </motion.div>
       </div>
 
-      {/* RIGHT COLUMN: AUTHENTICATION FORM */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white relative">
-        <div className="max-w-md w-full">
+      {/* RIGHT COLUMN: AUTHENTICATION FORM (40% width) */}
+      <div className="w-full lg:w-[40%] flex flex-col items-center justify-center p-6 sm:p-12 bg-white relative overflow-y-auto">
+        <div className="max-w-sm w-full">
           
           {/* Mobile-only branding header */}
           <div className="lg:hidden text-center mb-8">
