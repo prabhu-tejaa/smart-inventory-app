@@ -848,19 +848,6 @@ export default function App() {
                 Sales Log
               </button>
 
-              {user?.role === 'admin' && (
-                <button
-                  onClick={() => setActiveTab('admin-hub')}
-                  className={`flex-1 py-3 text-xs font-display font-medium border-b-2 tracking-tight transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
-                    activeTab === 'admin-hub'
-                      ? "border-slate-900 text-slate-950 bg-white"
-                      : "border-transparent text-slate-500 hover:text-slate-800"
-                  }`}
-                >
-                  <Database className="w-3.5 h-3.5" />
-                  Admin
-                </button>
-              )}
             </div>
 
             {/* TAB PANEL CONTENTS */}

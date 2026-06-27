@@ -20,6 +20,10 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'products' | 'sales'>('overview');
   
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  
+  // New User Form State
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({ email: '', password: '', role: 'user' });
 
   const fetchUsers = async () => {
     try {
@@ -67,6 +71,29 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
       });
       if (res.ok) fetchUsers();
       else alert("Failed to update role");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`/api/auth/users`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(newUser)
+      });
+      if (res.ok) {
+        setNewUser({ email: '', password: '', role: 'user' });
+        setShowAddUser(false);
+        fetchUsers();
+      } else {
+        alert("Failed to create user: " + (await res.json()).message);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -221,7 +248,43 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               className="max-w-6xl mx-auto"
             >
-              <h1 className="text-3xl font-display font-bold text-slate-900 mb-8">User Management</h1>
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-display font-bold text-slate-900">User Management</h1>
+                <button 
+                  onClick={() => setShowAddUser(!showAddUser)}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  {showAddUser ? 'Cancel' : '+ Add User'}
+                </button>
+              </div>
+
+              {showAddUser && (
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-200 mb-6 relative">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 rounded-t-2xl"></div>
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-900"><Users className="w-5 h-5"/> Register New User</h3>
+                  <form onSubmit={handleAddUser} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Email Address</label>
+                      <input type="email" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Password</label>
+                      <input type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required minLength={6} />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Role</label>
+                      <select value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500 bg-white">
+                        <option value="user">USER</option>
+                        <option value="admin">ADMIN</option>
+                      </select>
+                    </div>
+                    <div className="sm:col-span-1 flex justify-end">
+                      <button type="submit" className="w-full px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">Create User</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <table className="w-full text-sm text-left">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
