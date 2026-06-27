@@ -413,7 +413,12 @@ export default function App() {
       <header className="h-[60px] max-h-[60px] shrink-0 bg-white border-b border-[#e2e8f0] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
           <div className="p-1.5 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-sm">
-            <Package className="w-5 h-5" />
+            <motion.div
+              animate={{ y: [0, -2, 0] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Package className="w-5 h-5" />
+            </motion.div>
           </div>
           <span className="font-display font-bold tracking-tight text-slate-900 text-lg md:text-xl">
             Smart Inventory
@@ -864,39 +869,41 @@ export default function App() {
                     <form onSubmit={handleAddProduct} className="space-y-3">
                       <div>
                         <h4 className="text-sm font-display font-bold text-slate-900">Add Stock Entry</h4>
-                        <p className="text-[11px] text-slate-500">Record a new supply shipment to local shelf catalogs.</p>
                       </div>
 
-                      {/* Name of Product */}
-                      <div className="space-y-1">
-                        <label className="text-[11px] font-sans font-medium text-slate-600 block">Product Name *</label>
-                        <input 
-                          type="text"
-                          required
-                          value={newProduct.name}
-                          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                          placeholder="e.g. Fortune Mustard Oil 1L"
-                          className="w-full bg-white text-xs border border-slate-200 p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850"
-                        />
-                      </div>
+                      {/* Name & Category Split row */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Name of Product */}
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-sans font-medium text-slate-600 block">Product Name *</label>
+                          <input 
+                            type="text"
+                            required
+                            value={newProduct.name}
+                            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                            placeholder="e.g. Mustard Oil"
+                            className="w-full bg-white text-xs border border-slate-200 p-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850"
+                          />
+                        </div>
 
-                      {/* Category of product */}
-                      <div className="space-y-1">
-                        <label className="text-[11px] font-sans font-medium text-slate-600 block">Category *</label>
-                        <input 
-                          type="text"
-                          required
-                          value={newProduct.category}
-                          onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                          placeholder="e.g. Edible Oils, Dairy, Spices"
-                          list="existing-categories"
-                          className="w-full bg-white text-xs border border-slate-200 p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850"
-                        />
-                        <datalist id="existing-categories">
-                          {categories.map((c, i) => (
-                            <option key={i} value={c} />
-                          ))}
-                        </datalist>
+                        {/* Category of product */}
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-sans font-medium text-slate-600 block">Category *</label>
+                          <input 
+                            type="text"
+                            required
+                            value={newProduct.category}
+                            onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                            placeholder="e.g. Oils, Dairy"
+                            list="existing-categories"
+                            className="w-full bg-white text-xs border border-slate-200 p-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850"
+                          />
+                          <datalist id="existing-categories">
+                            {categories.map((c, i) => (
+                              <option key={i} value={c} />
+                            ))}
+                          </datalist>
+                        </div>
                       </div>
 
                       {/* Pricing Split row */}
@@ -913,7 +920,7 @@ export default function App() {
                               value={newProduct.buyPrice}
                               onChange={(e) => setNewProduct({ ...newProduct, buyPrice: e.target.value })}
                               placeholder="120.00"
-                              className="w-full bg-white text-xs border border-slate-200 p-2 pl-6 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
+                              className="w-full bg-white text-xs border border-slate-200 p-1.5 pl-6 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
                             />
                           </div>
                         </div>
@@ -930,7 +937,7 @@ export default function App() {
                               value={newProduct.sellPrice}
                               onChange={(e) => setNewProduct({ ...newProduct, sellPrice: e.target.value })}
                               placeholder="145.00"
-                              className="w-full bg-white text-xs border border-slate-200 p-2 pl-6 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
+                              className="w-full bg-white text-xs border border-slate-200 p-1.5 pl-6 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
                             />
                           </div>
                         </div>
@@ -941,14 +948,14 @@ export default function App() {
                         <div className="space-y-1">
                           <label className="text-[11px] font-sans font-medium text-slate-600 block">Quantity Total *</label>
                           <input 
-                            type="number"
-                            required
-                            min="0"
-                            value={newProduct.quantity}
-                            onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
-                            placeholder="50"
-                            className="w-full bg-white text-xs border border-slate-200 p-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
-                          />
+                              type="number"
+                              required
+                              min="0"
+                              value={newProduct.quantity}
+                              onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
+                              placeholder="50"
+                              className="w-full bg-white text-xs border border-slate-200 p-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 text-slate-850 font-mono"
+                            />
                         </div>
 
                         <div className="space-y-1">
