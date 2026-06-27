@@ -377,7 +377,7 @@ export default function App() {
   }
 
   return (
-    <div id="smart-inventory-app" className="min-h-screen bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
+    <div id="smart-inventory-app" className="h-screen max-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
       
       {/* Dynamic Alert Banner Toast Overlay Stack */}
       <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
