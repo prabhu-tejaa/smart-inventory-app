@@ -218,6 +218,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
         </div>
       </div>
     </div>
+  );
 }
 
 // A professional typing animation component
