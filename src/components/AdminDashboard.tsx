@@ -17,8 +17,8 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ token, onExit, products, sales, refreshData }: AdminDashboardProps) {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'products' | 'sales'>('overview');
-  
+  const [activeTab, setActiveTab] = useState<'users'>('users');
+
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   
   // New User Form State
@@ -170,10 +170,7 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
         
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {[
-            { id: 'overview', icon: LayoutDashboard, label: 'Overview' },
-            { id: 'users', icon: Users, label: 'Manage Users' },
-            { id: 'products', icon: Package, label: 'Global Inventory' },
-            { id: 'sales', icon: ShoppingCart, label: 'Global Sales' }
+            { id: 'users', icon: Users, label: 'Manage Users' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -204,43 +201,6 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
       <div className="flex-1 overflow-y-auto p-10 relative">
         <AnimatePresence mode="wait">
           
-          {/* OVERVIEW TAB */}
-          {activeTab === 'overview' && (
-            <motion.div 
-              key="overview"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              className="space-y-6 max-w-6xl mx-auto"
-            >
-              <h1 className="text-3xl font-display font-bold text-slate-900 mb-8">System Overview</h1>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 text-slate-500 mb-3 text-xs font-bold uppercase tracking-widest">
-                    <Users className="w-4 h-4 text-indigo-500" /> Total Users
-                  </div>
-                  <div className="text-4xl font-extrabold text-slate-900">{loading ? '-' : users.length}</div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 text-slate-500 mb-3 text-xs font-bold uppercase tracking-widest">
-                    <Package className="w-4 h-4 text-emerald-500" /> Global Items
-                  </div>
-                  <div className="text-4xl font-extrabold text-slate-900">{products.length}</div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 text-slate-500 mb-3 text-xs font-bold uppercase tracking-widest">
-                    <TrendingUp className="w-4 h-4 text-amber-500" /> Total Revenue
-                  </div>
-                  <div className="text-4xl font-extrabold text-slate-900 font-mono">₹{totalRevenue.toLocaleString()}</div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
-                  <div className="flex items-center gap-2 text-slate-500 mb-3 text-xs font-bold uppercase tracking-widest">
-                    <TrendingUp className="w-4 h-4 text-green-500" /> Total Profit
-                  </div>
-                  <div className="text-4xl font-extrabold text-green-600 font-mono">₹{totalProfit.toLocaleString()}</div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
           {/* USERS TAB */}
           {activeTab === 'users' && (
             <motion.div 
@@ -314,131 +274,6 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
                         <td className="px-6 py-4 text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-right">
                           <button onClick={() => deleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
-
-          {/* PRODUCTS TAB */}
-          {activeTab === 'products' && (
-            <motion.div 
-              key="products"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              className="max-w-6xl mx-auto"
-            >
-              <h1 className="text-3xl font-display font-bold text-slate-900 mb-8">Global Inventory</h1>
-              
-              {editingProduct && (
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-200 mb-6 relative">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 rounded-t-2xl"></div>
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-900"><Edit2 className="w-5 h-5"/> Edit Product Data</h3>
-                  <form onSubmit={saveProductEdit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Name</label>
-                      <input type="text" value={editingProduct.name} onChange={e => setEditingProduct({...editingProduct, name: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Category</label>
-                      <input type="text" value={editingProduct.category} onChange={e => setEditingProduct({...editingProduct, category: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Buy Price (₹)</label>
-                      <input type="number" value={editingProduct.buyPrice} onChange={e => setEditingProduct({...editingProduct, buyPrice: Number(e.target.value)})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Sell Price (₹)</label>
-                      <input type="number" value={editingProduct.sellPrice} onChange={e => setEditingProduct({...editingProduct, sellPrice: Number(e.target.value)})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Stock Quantity</label>
-                      <input type="number" value={editingProduct.quantity} onChange={e => setEditingProduct({...editingProduct, quantity: Number(e.target.value)})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Expiry Date</label>
-                      <input type="date" value={editingProduct.expiryDate} onChange={e => setEditingProduct({...editingProduct, expiryDate: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
-                    </div>
-                    <div className="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end gap-3 mt-4">
-                      <button type="button" onClick={() => setEditingProduct(null)} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors">Cancel</button>
-                      <button type="submit" className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">Save Changes</button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
-                    <tr>
-                      <th className="px-6 py-4">Name</th>
-                      <th className="px-6 py-4">Category</th>
-                      <th className="px-6 py-4">Prices (B/S)</th>
-                      <th className="px-6 py-4">Stock</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {products.map(p => (
-                      <tr key={p._id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-slate-900">{p.name}</td>
-                        <td className="px-6 py-4 text-slate-600">{p.category}</td>
-                        <td className="px-6 py-4 font-mono text-slate-600">₹{p.buyPrice} / ₹{p.sellPrice}</td>
-                        <td className="px-6 py-4 font-mono">
-                          <span className={p.quantity <= p.lowStockThreshold ? 'text-red-600 font-bold bg-red-50 px-2 py-1 rounded' : 'text-slate-900'}>{p.quantity}</span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-1">
-                            <button onClick={() => setEditingProduct(p)} className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => deleteProduct(p._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
-
-          {/* SALES TAB */}
-          {activeTab === 'sales' && (
-            <motion.div 
-              key="sales"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              className="max-w-6xl mx-auto"
-            >
-              <h1 className="text-3xl font-display font-bold text-slate-900 mb-8">Global Sales Ledger</h1>
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
-                    <tr>
-                      <th className="px-6 py-4">Date</th>
-                      <th className="px-6 py-4">Item</th>
-                      <th className="px-6 py-4">Qty</th>
-                      <th className="px-6 py-4">Revenue</th>
-                      <th className="px-6 py-4">Profit</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {sales.map(s => (
-                      <tr key={s._id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 text-slate-500">{new Date(s.soldAt).toLocaleString()}</td>
-                        <td className="px-6 py-4 font-medium text-slate-900">{s.productName}</td>
-                        <td className="px-6 py-4 font-mono">{s.qtySold}</td>
-                        <td className="px-6 py-4 font-mono text-slate-900">₹{(s.qtySold * s.sellPrice).toLocaleString()}</td>
-                        <td className="px-6 py-4 font-mono text-green-600 font-bold">+₹{s.profit.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => deleteSale(s._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Void Sale">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </td>
