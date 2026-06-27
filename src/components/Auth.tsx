@@ -70,13 +70,15 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
         <div className="relative z-10 w-full max-w-xl">
           <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight">
             Smart Inventory App,<br/>
-            <span className="text-slate-400 font-light">track all your products.</span>
+            <motion.span 
+              animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+              style={{ backgroundSize: "200% auto" }}
+              className="font-light bg-gradient-to-r from-slate-500 via-indigo-300 to-slate-500 bg-clip-text text-transparent inline-block"
+            >
+              track all your products.
+            </motion.span>
           </h1>
-          
-
-          <p className="text-slate-500 text-lg font-light max-w-md">
-            Sign in to access your secure command center.
-          </p>
         </div>
       </div>
 
