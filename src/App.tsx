@@ -3,6 +3,8 @@ import {
   Package, 
   AlertTriangle, 
   TrendingUp, 
+  TrendingDown,
+  Minus,
   Database, 
   Search, 
   PlusCircle, 
@@ -146,26 +148,10 @@ export default function App() {
 
   // Sync clock timestamp
   useEffect(() => {
-    const now = new Date();
-    // Simulate real-time ticking starting from mock time 13:01:59
-    let seconds = 59;
-    let minutes = 1;
-    let hours = 13;
     const interval = setInterval(() => {
-      seconds++;
-      if (seconds >= 60) {
-        seconds = 0;
-        minutes++;
-        if (minutes >= 60) {
-          minutes = 0;
-          hours++;
-          if (hours >= 24) {
-            hours = 0;
-          }
-        }
-      }
+      const now = new Date();
       const pad = (n: number) => n.toString().padStart(2, '0');
-      setLiveTime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+      setLiveTime(`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`);
     }, 1000);
     
     return () => clearInterval(interval);
@@ -180,11 +166,12 @@ export default function App() {
     }).format(val);
   };
 
-  // --- MODEL HELPERS (Date: 2026-06-27) ---
-  const todayDateStr = "2026-06-27";
+  // --- MODEL HELPERS ---
+  const todayDateStr = new Date().toLocaleDateString('en-CA'); // Local YYYY-MM-DD
 
   const getDaysRemaining = (expiryDateStr: string) => {
-    const today = new Date("2026-06-27T00:00:00");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const expiry = new Date(expiryDateStr + "T00:00:00");
     const diffTime = expiry.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -380,7 +367,7 @@ export default function App() {
   }
 
   return (
-    <div id="smart-inventory-app" className="min-h-screen md:h-screen md:max-h-screen md:overflow-hidden bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
+    <div id="smart-inventory-app" className="min-h-screen md:h-screen md:overflow-y-auto bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
       
       {/* Dynamic Alert Banner Toast Overlay Stack */}
       <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
@@ -447,7 +434,7 @@ export default function App() {
         />
       ) : (
       <>
-      <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-4 overflow-visible md:overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-3 md:p-4 flex flex-col gap-3 overflow-visible md:overflow-y-auto">
         
         {/* MOBILE OVERLAY REMOVED FOR PROD */}
 
@@ -509,13 +496,13 @@ export default function App() {
         </AnimatePresence>
 
         {/* METRICS GRID SUMMARY */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4" id="dashboard-metric-cards">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-2" id="dashboard-metric-cards">
           
           {/* Item count card */}
-          <div className="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+          <div className="bg-white border border-[#e2e8f0] p-2.5 rounded-xl shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Products</span>
-              <div className="p-1 px-1.5 bg-slate-100 text-slate-700 rounded text-[11px] font-mono font-bold group-hover:scale-105 transition-transform">
+              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Total Products</span>
+              <div className="p-1 px-1.5 bg-slate-100 text-slate-700 rounded text-[10px] font-mono font-bold group-hover:scale-105 transition-transform">
                 ITEMS
               </div>
             </div>
@@ -532,7 +519,9 @@ export default function App() {
           </div>
 
           {/* Expiring Soon / Expired Card */}
-          <div className="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+          <div className={`bg-white border border-[#e2e8f0] p-3 rounded-xl shadow-2xs hover:shadow-xs transition-all duration-200 flex flex-col justify-between group ${
+            counts.expiredSoon > 0 ? "hover:border-amber-400 border-amber-200" : "hover:border-slate-300"
+          }`}>
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Expiry / Warns</span>
               <div className={`p-1 px-1.5 rounded text-[11px] font-mono font-bold ${
@@ -558,7 +547,9 @@ export default function App() {
           </div>
 
           {/* Low Stock Alerts Card */}
-          <div className="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+          <div className={`bg-white border border-[#e2e8f0] p-3 rounded-xl shadow-2xs hover:shadow-xs transition-all duration-200 flex flex-col justify-between group ${
+            counts.lowStock > 0 ? "hover:border-red-400 border-red-200" : "hover:border-slate-300"
+          }`}>
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Low Stock Alerts</span>
               <div className={`p-1 px-1.5 rounded text-[11px] font-mono font-bold ${
@@ -584,20 +575,32 @@ export default function App() {
           </div>
 
           {/* Today's Profit Indian Currency Localized Card */}
-          <div className="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs hover:shadow-xs hover:border-[#10b981]/40 transition-all duration-200 flex flex-col justify-between group">
+          <div className={`bg-white border border-[#e2e8f0] p-3 rounded-xl shadow-2xs hover:shadow-xs transition-all duration-200 flex flex-col justify-between group ${
+            counts.todayProfit > 0 ? "hover:border-green-400" : counts.todayProfit < 0 ? "hover:border-red-400" : "hover:border-slate-300"
+          }`}>
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Today's Profit</span>
-              <div className="p-1 px-1.5 bg-[#f0fdf4] text-[#15803d] rounded text-[11px] font-mono font-bold group-hover:scale-105 transition-transform">
+              <div className={`p-1 px-1.5 rounded text-[11px] font-mono font-bold group-hover:scale-105 transition-transform ${
+                counts.todayProfit > 0 ? "bg-green-50 text-green-700" : counts.todayProfit < 0 ? "bg-red-50 text-red-700" : "bg-slate-100 text-slate-700"
+              }`}>
                 MARGIN
               </div>
             </div>
             <div className="mt-2.5 flex items-baseline gap-1">
-              <span className="font-mono font-semibold text-2xl md:text-3xl tracking-tight text-[#15803d]">
+              <span className={`font-mono font-semibold text-2xl md:text-3xl tracking-tight ${
+                counts.todayProfit > 0 ? "text-green-700" : counts.todayProfit < 0 ? "text-red-700" : "text-slate-700"
+              }`}>
                 {formatINR(counts.todayProfit)}
               </span>
             </div>
             <div className="mt-2 text-[10.5px] text-slate-400 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-[#15803d]" />
+              {counts.todayProfit > 0 ? (
+                <TrendingUp className="w-3 h-3 text-green-700" />
+              ) : counts.todayProfit < 0 ? (
+                <TrendingDown className="w-3 h-3 text-red-700" />
+              ) : (
+                <Minus className="w-3 h-3 text-slate-400" />
+              )}
               <span className="font-mono">{todayDateStr} Net Returns</span>
             </div>
           </div>
@@ -1191,7 +1194,7 @@ export default function App() {
 
       </main>
 
-      <footer className="shrink-0 bg-white border-t border-[#e2e8f0] py-3.5 text-center text-[11px] text-slate-400 font-sans flex flex-col md:flex-row md:items-center md:justify-center px-6 gap-2">
+      <footer className="shrink-0 hidden bg-white border-t border-[#e2e8f0] py-3.5 text-center text-[11px] text-slate-400 font-sans md:flex flex-col md:flex-row md:items-center md:justify-center px-6 gap-2">
         <span className="font-sans">
           &copy; 2026 Smart Inventory App
         </span>
