@@ -126,6 +126,8 @@ router.post('/', async (req, res) => {
     console.error("POST /api/sales txn error:", err);
     return res.status(500).json({ error: "Storefront transaction failed to process.", details: err.message });
   }
+});
+
 // DELETE /api/sales/:id - Void/delete a sale
 router.delete('/:id', async (req, res) => {
   try {

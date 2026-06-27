@@ -54,54 +54,54 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
   return (
     <div className="h-screen max-h-screen overflow-hidden bg-slate-50 flex">
       
-      {/* LEFT COLUMN: BRANDING & IMAGE (60% width) */}
-      <div className="hidden lg:flex lg:w-[60%] bg-[#0a0f1c] relative overflow-hidden flex-col items-center justify-center p-12 border-r border-slate-800">
+      {/* LEFT COLUMN: MINIMALIST BRANDING (60% width) */}
+      <div className="hidden lg:flex lg:w-[60%] bg-[#0a0f1c] relative overflow-hidden items-center justify-center p-12 border-r border-slate-800">
         
-        {/* Animated Abstract Background Glows */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        {/* Animated Abstract Background Glows (Subtle) */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-50">
           <motion.div 
             animate={{ rotate: 360, scale: [1, 1.1, 1] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
+            className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-full blur-3xl"
           />
         </div>
 
-        {/* 3D Dashboard Image Centerpiece */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="relative z-10 w-full max-w-2xl mt-4 flex-1 flex items-center justify-center"
-        >
-          <motion.img 
-            animate={{ y: [-15, 15, -15] }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            src="/hero-bg.png" 
-            alt="Smart Inventory Interface" 
-            className="w-full h-auto object-contain max-h-[450px] drop-shadow-[0_20px_50px_rgba(79,70,229,0.2)] rounded-3xl"
-          />
-          {/* Subtle gradient overlay on bottom of image for text blending */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-transparent to-transparent opacity-90 rounded-3xl" />
-        </motion.div>
-
-        {/* Simplistic Animated Text Footer */}
-        <div className="relative z-20 w-full max-w-2xl text-center mt-auto pb-4">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-4xl xl:text-5xl font-display font-extrabold mb-4 tracking-tight text-white"
-          >
-            Inventory, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Perfected.</span>
-          </motion.h1>
+        {/* Minimal Typing Text */}
+        <div className="relative z-10 w-full max-w-xl">
+          <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-8 border border-indigo-500/20">
+            <Package className="w-6 h-6 text-indigo-400" />
+          </div>
           
+          <div className="font-mono text-indigo-400 mb-4 text-sm font-semibold tracking-widest uppercase">
+            System Ready
+          </div>
+          
+          <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight">
+            Inventory management,<br/>
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="text-slate-400 font-light"
+            >
+              reduced to the essentials.
+            </motion.span>
+          </h1>
+          
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: "40px" }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="h-1 bg-indigo-500 rounded-full mb-8"
+          />
+
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.9, duration: 1 }}
-            className="text-slate-400 text-lg mx-auto max-w-md font-light"
+            transition={{ delay: 1.5, duration: 1 }}
+            className="text-slate-500 text-lg font-light max-w-md"
           >
-            A powerfully simple command center for your store.
+            Sign in to access your secure command center.
           </motion.p>
         </div>
       </div>
