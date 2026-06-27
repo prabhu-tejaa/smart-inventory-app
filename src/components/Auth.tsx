@@ -54,69 +54,56 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
   return (
     <div className="h-screen max-h-screen overflow-hidden bg-slate-50 flex">
       
-      {/* LEFT COLUMN: BRANDING & INTERACTIVE ANIMATION (60% width) */}
-      <div className="hidden lg:flex lg:w-[60%] bg-[#0a0f1c] relative overflow-hidden items-center justify-center p-12 xl:p-20 border-r border-slate-800">
+      {/* LEFT COLUMN: BRANDING & IMAGE (60% width) */}
+      <div className="hidden lg:flex lg:w-[60%] bg-[#0a0f1c] relative overflow-hidden flex-col items-center justify-center p-12 border-r border-slate-800">
         
-        {/* Animated Abstract Background Grid & Glows */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f46e511_1px,transparent_1px),linear-gradient(to_bottom,#4f46e511_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-          
+        {/* Animated Abstract Background Glows */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
           <motion.div 
             animate={{ rotate: 360, scale: [1, 1.1, 1] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"
           />
-          <motion.div 
-            animate={{ rotate: -360, scale: [1, 1.2, 1] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/10 to-teal-500/10 rounded-full blur-3xl"
-          />
         </div>
 
-        {/* Branding Content */}
-        <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="z-10 relative text-white max-w-xl w-full"
+        {/* 3D Dashboard Image Centerpiece */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative z-10 w-full max-w-2xl mt-4 flex-1 flex items-center justify-center"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-indigo-500/20">
-            <Package className="w-8 h-8 text-white" />
-          </div>
-          
-          <h1 className="text-5xl xl:text-6xl font-display font-extrabold mb-6 tracking-tight leading-[1.1]">
-            Run your store like a <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">pro.</span>
-          </h1>
-          
-          <p className="text-slate-300 text-lg mb-12 leading-relaxed font-light max-w-lg">
-            Say goodbye to messy notebooks and guesswork. Smart Inventory tracks what sells, warns you before things expire, and protects your data—so you can focus on growing your business.
-          </p>
-          
-          {/* Animated Features List */}
-          <div className="space-y-8">
-            {[
-              { icon: Package, title: 'Never run out of stock', text: 'Get instantly notified before popular items hit zero.' },
-              { icon: TrendingUp, title: 'See your real profits', text: 'Know exactly how much money you made today, down to the rupee.' },
-              { icon: ShieldCheck, title: 'Your data is locked down', text: 'Bank-level security ensures nobody else sees your inventory.' },
-            ].map((feature, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + (idx * 0.15) }}
-                className="flex items-start gap-5 text-slate-300 group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all shrink-0">
-                  <feature.icon className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white text-base mb-1.5">{feature.title}</h4>
-                  <p className="text-slate-400 text-[15px] leading-relaxed max-w-sm">{feature.text}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <motion.img 
+            animate={{ y: [-15, 15, -15] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            src="/hero-bg.png" 
+            alt="Smart Inventory Interface" 
+            className="w-full h-auto object-contain max-h-[450px] drop-shadow-[0_20px_50px_rgba(79,70,229,0.2)] rounded-3xl"
+          />
+          {/* Subtle gradient overlay on bottom of image for text blending */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-transparent to-transparent opacity-90 rounded-3xl" />
         </motion.div>
+
+        {/* Simplistic Animated Text Footer */}
+        <div className="relative z-20 w-full max-w-2xl text-center mt-auto pb-4">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="text-4xl xl:text-5xl font-display font-extrabold mb-4 tracking-tight text-white"
+          >
+            Inventory, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Perfected.</span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 1 }}
+            className="text-slate-400 text-lg mx-auto max-w-md font-light"
+          >
+            A powerfully simple command center for your store.
+          </motion.p>
+        </div>
       </div>
 
       {/* RIGHT COLUMN: AUTHENTICATION FORM (40% width) */}
