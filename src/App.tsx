@@ -43,6 +43,7 @@ export default function App() {
     localStorage.removeItem('user');
     setToken('');
     setUser(null);
+    setIsAdminMode(false);
   };
 
   const authHeaders = { 'Authorization': `Bearer ${token}` };
@@ -136,10 +137,12 @@ export default function App() {
 
   // Load backend details
   useEffect(() => {
-    fetchInventory();
-    fetchSalesLogs();
     fetchDBStatus();
-  }, []);
+    if (token) {
+      fetchInventory();
+      fetchSalesLogs();
+    }
+  }, [token]);
 
   // Sync clock timestamp
   useEffect(() => {
