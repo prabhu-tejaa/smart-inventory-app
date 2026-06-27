@@ -126,6 +126,33 @@ router.post('/', async (req, res) => {
     console.error("POST /api/sales txn error:", err);
     return res.status(500).json({ error: "Storefront transaction failed to process.", details: err.message });
   }
+// DELETE /api/sales/:id - Void/delete a sale
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Only allow admin to delete sales globally, or normal users their own sales
+    if (isMongoConnected()) {
+      const filter = req.user.role === 'admin' ? { _id: id } : { _id: id, user: req.user.id };
+      const deleted = await Sale.findOneAndDelete(filter);
+      if (!deleted) {
+        return res.status(404).json({ error: "Sale record not found." });
+      }
+      return res.json({ message: "Sale record deleted successfully." });
+    } else {
+      let sales = readSalesJSON();
+      const initialLength = sales.length;
+      sales = sales.filter(s => !(s._id === id && (req.user.role === 'admin' || s.userId === req.user.id)));
+      if (sales.length === initialLength) {
+        return res.status(404).json({ error: "Sale record not found." });
+      }
+      writeSalesJSON(sales);
+      return res.json({ message: "Sale record deleted successfully." });
+    }
+  } catch (err) {
+    console.error("DELETE /api/sales/:id error:", err);
+    return res.status(500).json({ error: "Failed to delete sale record.", details: err.message });
+  }
 });
 
 export default router;

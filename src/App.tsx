@@ -14,6 +14,7 @@ import {
   ShoppingCart, 
   FileText, 
   ChevronRight,
+  ShieldAlert,
   Filter,
   RefreshCw,
   User,
@@ -23,7 +24,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Product, Sale, DBStatus } from './types';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
-import AdminHub from './components/AdminHub';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
@@ -56,7 +57,8 @@ export default function App() {
   // App states
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All items');
-  const [activeTab, setActiveTab] = useState<'confirm-entry' | 'record-sale' | 'sales-log' | 'profile' | 'admin-hub'>('confirm-entry');
+  const [activeTab, setActiveTab] = useState<'confirm-entry' | 'record-sale' | 'sales-log' | 'profile'>('confirm-entry');
+  const [isAdminMode, setIsAdminMode] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(true);
   const [loading, setLoading] = useState(false);
   const [liveTime, setLiveTime] = useState<string>('13:01:59');
@@ -418,7 +420,15 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={() => setActiveTab('profile')} className="text-xs font-semibold text-indigo-600 flex items-center gap-1 hover:text-indigo-800">
+          {user?.role === 'admin' && (
+            <button 
+              onClick={() => setIsAdminMode(true)} 
+              className="hidden sm:flex text-xs font-semibold px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 transition-colors rounded-lg items-center gap-1 mr-2 shadow-sm"
+            >
+              <ShieldAlert className="w-4 h-4" /> Admin Console
+            </button>
+          )}
+          <button onClick={() => { setActiveTab('profile'); setIsAdminMode(false); }} className="text-xs font-semibold text-indigo-600 flex items-center gap-1 hover:text-indigo-800">
             <User className="w-4 h-4" /> {user.email}
           </button>
           <button onClick={handleLogout} className="text-xs font-semibold text-slate-500 flex items-center gap-1 hover:text-slate-800">
@@ -428,7 +438,17 @@ export default function App() {
 
       </header>
 
-      {/* MAIN CONTAINER */}
+      {/* MAIN CONTAINER / ADMIN TOGGLE */}
+      {isAdminMode ? (
+        <AdminDashboard 
+          token={token} 
+          onExit={() => setIsAdminMode(false)} 
+          products={products} 
+          sales={sales} 
+          refreshData={() => { fetchInventory(); fetchSalesLogs(); }} 
+        />
+      ) : (
+      <>
       <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-hidden">
         
         {/* MOBILE OVERLAY REMOVED FOR PROD */}
@@ -1103,7 +1123,6 @@ export default function App() {
                 )}
 
                 {activeTab === 'profile' && <Profile user={user} token={token} />}
-                {activeTab === 'admin-hub' && user?.role === 'admin' && <AdminHub token={token} products={products} sales={sales} />}
 
                 {/* TAB 3: TODAY'S SALES TRANSACTION LOGS */}
                 {activeTab === 'sales-log' && (
@@ -1199,7 +1218,8 @@ export default function App() {
           </span>
         </div>
       </footer>
-
+      </>
+      )}
     </div>
   );
 }

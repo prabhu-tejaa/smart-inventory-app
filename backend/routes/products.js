@@ -100,22 +100,42 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/products/:id - Adjust/update a specific product's inventory stock quantity directly
+// PUT /api/products/:id - Adjust/update a specific product
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { quantity } = req.body;
+    const { quantity, name, category, buyPrice, sellPrice, expiryDate, lowStockThreshold } = req.body;
 
-    const parsedQuantity = Number(quantity);
-    if (isNaN(parsedQuantity) || parsedQuantity < 0) {
-      return res.status(400).json({ error: "Quantity must be a valid positive number." });
+    const updates = {};
+    if (quantity !== undefined) {
+      const parsedQuantity = Number(quantity);
+      if (isNaN(parsedQuantity) || parsedQuantity < 0) return res.status(400).json({ error: "Invalid quantity" });
+      updates.quantity = parsedQuantity;
+    }
+    if (name) updates.name = name.trim();
+    if (category) updates.category = category.trim();
+    if (buyPrice !== undefined) {
+      const parsedBuyPrice = Number(buyPrice);
+      if (isNaN(parsedBuyPrice) || parsedBuyPrice < 0) return res.status(400).json({ error: "Invalid buy price" });
+      updates.buyPrice = parsedBuyPrice;
+    }
+    if (sellPrice !== undefined) {
+      const parsedSellPrice = Number(sellPrice);
+      if (isNaN(parsedSellPrice) || parsedSellPrice < 0) return res.status(400).json({ error: "Invalid sell price" });
+      updates.sellPrice = parsedSellPrice;
+    }
+    if (expiryDate) updates.expiryDate = expiryDate;
+    if (lowStockThreshold !== undefined) {
+      const parsedThreshold = Number(lowStockThreshold);
+      if (isNaN(parsedThreshold) || parsedThreshold < 0) return res.status(400).json({ error: "Invalid threshold" });
+      updates.lowStockThreshold = parsedThreshold;
     }
 
     if (isMongoConnected()) {
       const filter = req.user.role === 'admin' ? { _id: id } : { _id: id, user: req.user.id };
       const updated = await Product.findOneAndUpdate(
         filter,
-        { quantity: parsedQuantity },
+        { $set: updates },
         { new: true, runValidators: true }
       );
       if (!updated) {
@@ -128,13 +148,40 @@ router.put('/:id', async (req, res) => {
       if (index === -1) {
         return res.status(404).json({ error: "Product not found in local inventory storage." });
       }
-      products[index].quantity = parsedQuantity;
+      products[index] = { ...products[index], ...updates };
       writeProductsJSON(products);
       return res.json(products[index]);
     }
   } catch (err) {
     console.error("PUT /api/products/:id error:", err);
-    return res.status(500).json({ error: "Failed to update stock quantity.", details: err.message });
+    return res.status(500).json({ error: "Failed to update product.", details: err.message });
+  }
+});
+
+// DELETE /api/products/:id - Delete a product
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (isMongoConnected()) {
+      const filter = req.user.role === 'admin' ? { _id: id } : { _id: id, user: req.user.id };
+      const deleted = await Product.findOneAndDelete(filter);
+      if (!deleted) {
+        return res.status(404).json({ error: "Product not found." });
+      }
+      return res.json({ message: "Product deleted successfully." });
+    } else {
+      let products = readProductsJSON();
+      const initialLength = products.length;
+      products = products.filter(p => !(p._id === id && (req.user.role === 'admin' || p.userId === req.user.id)));
+      if (products.length === initialLength) {
+        return res.status(404).json({ error: "Product not found." });
+      }
+      writeProductsJSON(products);
+      return res.json({ message: "Product deleted successfully." });
+    }
+  } catch (err) {
+    console.error("DELETE /api/products/:id error:", err);
+    return res.status(500).json({ error: "Failed to delete product.", details: err.message });
   }
 });
 
