@@ -73,37 +73,6 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
           />
         </div>
 
-        {/* Floating Mock UI Elements for "Life" */}
-        <motion.div 
-          animate={{ y: [-10, 10, -10] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-10 top-20 bg-slate-900/80 backdrop-blur-md border border-slate-700 p-4 rounded-2xl shadow-2xl z-0 w-64 hidden xl:block"
-        >
-          <div className="flex justify-between items-start mb-3">
-            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-indigo-400" />
-            </div>
-            <span className="text-xs font-semibold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">+24.5%</span>
-          </div>
-          <p className="text-slate-400 text-xs mb-1">Today's Profit</p>
-          <h4 className="text-white font-display font-bold text-xl">₹12,450</h4>
-        </motion.div>
-
-        <motion.div 
-          animate={{ y: [10, -10, 10] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute right-20 bottom-32 bg-slate-900/80 backdrop-blur-md border border-slate-700 p-4 rounded-2xl shadow-2xl z-0 w-64 hidden xl:block"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-            <p className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Low Stock Alert</p>
-          </div>
-          <div className="flex justify-between items-center bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
-            <span className="text-slate-300 text-sm">Fortune Oil 1L</span>
-            <span className="text-amber-400 font-mono font-bold">2 left</span>
-          </div>
-        </motion.div>
-
         {/* Branding Content */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
@@ -119,12 +88,12 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
             Run your store like a <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">pro.</span>
           </h1>
           
-          <p className="text-slate-300 text-lg mb-10 leading-relaxed font-light max-w-lg">
+          <p className="text-slate-300 text-lg mb-12 leading-relaxed font-light max-w-lg">
             Say goodbye to messy notebooks and guesswork. Smart Inventory tracks what sells, warns you before things expire, and protects your data—so you can focus on growing your business.
           </p>
           
           {/* Animated Features List */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {[
               { icon: Package, title: 'Never run out of stock', text: 'Get instantly notified before popular items hit zero.' },
               { icon: TrendingUp, title: 'See your real profits', text: 'Know exactly how much money you made today, down to the rupee.' },
@@ -135,14 +104,14 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + (idx * 0.15) }}
-                className="flex items-start gap-4 text-slate-300 group"
+                className="flex items-start gap-5 text-slate-300 group"
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors shrink-0">
-                  <feature.icon className="w-5 h-5 text-indigo-400" />
+                <div className="w-14 h-14 rounded-2xl bg-slate-800/80 flex items-center justify-center border border-slate-700/50 shadow-inner group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all shrink-0">
+                  <feature.icon className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white text-[15px] mb-1">{feature.title}</h4>
-                  <p className="text-slate-400 text-sm leading-relaxed">{feature.text}</p>
+                  <h4 className="font-semibold text-white text-base mb-1.5">{feature.title}</h4>
+                  <p className="text-slate-400 text-[15px] leading-relaxed max-w-sm">{feature.text}</p>
                 </div>
               </motion.div>
             ))}
