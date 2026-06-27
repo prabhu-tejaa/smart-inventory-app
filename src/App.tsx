@@ -167,11 +167,8 @@ export default function App() {
       const pad = (n: number) => n.toString().padStart(2, '0');
       setLiveTime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
     }, 1000);
-    if (!token || !user) {
-    return <Auth onLogin={handleLogin} dbStatus={dbStatus} />;
-  }
-
-  return () => clearInterval(interval);
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Indian Rupee formatting utility
