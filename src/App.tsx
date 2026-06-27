@@ -429,7 +429,7 @@ export default function App() {
       </header>
 
       {/* MAIN CONTAINER */}
-      <main className="flex-1 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-auto">
+      <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-hidden">
         
         {/* MOBILE OVERLAY REMOVED FOR PROD */}
 
@@ -587,7 +587,7 @@ export default function App() {
         </section>
 
         {/* CORE GRID ARCHITECTURE: 2/3 and 1/3 splits */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 min-h-0">
           
           {/* THE MAIN PRODUCTS INVENTORY PANEL (2 Cols wide on desktop) */}
           <div className="lg:col-span-2 flex flex-col bg-white border border-[#e2e8f0] rounded-xl shadow-2xs overflow-hidden">
@@ -643,7 +643,7 @@ export default function App() {
             </div>
 
             {/* LIVE DENSITY TABLE CONTAINER */}
-            <div className="flex-1 overflow-x-auto min-h-[420px]" id="inventory-data-table-view">
+            <div className="flex-1 overflow-auto min-h-0" id="inventory-data-table-view">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#e2e8f0] bg-slate-50 text-[11px] font-display font-semibold uppercase tracking-wider text-slate-500">
@@ -844,7 +844,7 @@ export default function App() {
             </div>
 
             {/* TAB PANEL CONTENTS */}
-            <div className="flex-1 p-5 overflow-y-auto" style={{ maxHeight: '600px' }} id="interactive-command-tab-panel">
+            <div className="flex-1 p-5 overflow-y-auto min-h-0" id="interactive-command-tab-panel">
               <AnimatePresence mode="wait">
                 
                 {/* TAB 1: ADD PRODUCT BATCH ENTRY */}
