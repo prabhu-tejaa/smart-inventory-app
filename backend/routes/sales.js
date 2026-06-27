@@ -11,11 +11,14 @@ router.use(requireAuth);
 router.get('/', async (req, res) => {
   try {
     if (isMongoConnected()) {
-      const sales = await Sale.find({ user: req.user.id }).sort({ soldAt: -1 });
+      const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
+      const sales = await Sale.find(filter).sort({ soldAt: -1 });
       return res.json(sales);
     } else {
       let sales = readSalesJSON();
-      sales = sales.filter(s => s.userId === req.user.id);
+      if (req.user.role !== 'admin') {
+        sales = sales.filter(s => s.userId === req.user.id);
+      }
       // Sort descendingly by soldAt datetime
       sales.sort((a, b) => {
         const dateA = new Date(a.soldAt || 0);
@@ -45,7 +48,8 @@ router.post('/', async (req, res) => {
 
     if (isMongoConnected()) {
       // Sync on MongoDB Atlas database
-      const product = await Product.findOne({ _id: productId, user: req.user.id });
+      const filter = req.user.role === 'admin' ? { _id: productId } : { _id: productId, user: req.user.id };
+      const product = await Product.findOne(filter);
       if (!product) {
         return res.status(404).json({ error: "Product not found in Atlas database." });
       }
@@ -81,7 +85,7 @@ router.post('/', async (req, res) => {
     } else {
       // Local flat-file fallback transaction
       const products = readProductsJSON();
-      const pIndex = products.findIndex(p => p._id === productId && p.userId === req.user.id);
+      const pIndex = products.findIndex(p => p._id === productId && (req.user.role === 'admin' || p.userId === req.user.id));
       if (pIndex === -1) {
         return res.status(404).json({ error: "Product not found in custom offline inventory." });
       }

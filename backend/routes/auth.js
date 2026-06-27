@@ -8,7 +8,7 @@ const router = express.Router();
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, email: user.email },
+    { id: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET || 'fallback_secret_for_dev_only',
     { expiresIn: '30d' }
   );
@@ -32,7 +32,7 @@ router.post('/signup', async (req, res) => {
 
     res.status(201).json({
       token: generateToken(user),
-      user: { id: user._id, email: user.email }
+      user: { id: user._id, email: user.email, role: user.role }
     });
   } catch (err) {
     res.status(500).json({ message: 'Server error during signup', error: err.message });
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token: generateToken(user),
-      user: { id: user._id, email: user.email }
+      user: { id: user._id, email: user.email, role: user.role }
     });
   } catch (err) {
     res.status(500).json({ message: 'Server error during login', error: err.message });
@@ -91,6 +91,19 @@ router.post('/change-password', requireAuth, async (req, res) => {
     res.json({ message: 'Password updated successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error while changing password', error: err.message });
+  }
+});
+
+// @route   GET /api/auth/users (ADMIN ONLY)
+router.get('/users', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 

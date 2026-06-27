@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Product, Sale, DBStatus } from './types';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
+import AdminHub from './components/AdminHub';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
@@ -55,7 +56,7 @@ export default function App() {
   // App states
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All items');
-  const [activeTab, setActiveTab] = useState<'confirm-entry' | 'record-sale' | 'sales-log'>('confirm-entry');
+  const [activeTab, setActiveTab] = useState<'confirm-entry' | 'record-sale' | 'sales-log' | 'profile' | 'admin-hub'>('confirm-entry');
   const [bannerVisible, setBannerVisible] = useState(true);
   const [loading, setLoading] = useState(false);
   const [liveTime, setLiveTime] = useState<string>('13:01:59');
@@ -826,6 +827,20 @@ export default function App() {
                 <FileText className="w-3.5 h-3.5" />
                 Sales Log
               </button>
+
+              {user?.role === 'admin' && (
+                <button
+                  onClick={() => setActiveTab('admin-hub')}
+                  className={`flex-1 py-3 text-xs font-display font-medium border-b-2 tracking-tight transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+                    activeTab === 'admin-hub'
+                      ? "border-slate-900 text-slate-950 bg-white"
+                      : "border-transparent text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  Admin
+                </button>
+              )}
             </div>
 
             {/* TAB PANEL CONTENTS */}
@@ -1088,6 +1103,7 @@ export default function App() {
                 )}
 
                 {activeTab === 'profile' && <Profile user={user} token={token} />}
+                {activeTab === 'admin-hub' && user?.role === 'admin' && <AdminHub token={token} products={products} sales={sales} />}
 
                 {/* TAB 3: TODAY'S SALES TRANSACTION LOGS */}
                 {activeTab === 'sales-log' && (

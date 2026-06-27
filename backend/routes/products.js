@@ -10,11 +10,14 @@ router.use(requireAuth);
 router.get('/', async (req, res) => {
   try {
     if (isMongoConnected()) {
-      const products = await Product.find({ user: req.user.id }).sort({ expiryDate: 1 });
+      const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
+      const products = await Product.find(filter).sort({ expiryDate: 1 });
       return res.json(products);
     } else {
       let products = readProductsJSON();
-      products = products.filter(p => p.userId === req.user.id);
+      if (req.user.role !== 'admin') {
+        products = products.filter(p => p.userId === req.user.id);
+      }
       // Sort ascendingly by expiryDate
       products.sort((a, b) => {
         const dateA = a.expiryDate || '';
@@ -109,8 +112,9 @@ router.put('/:id', async (req, res) => {
     }
 
     if (isMongoConnected()) {
+      const filter = req.user.role === 'admin' ? { _id: id } : { _id: id, user: req.user.id };
       const updated = await Product.findOneAndUpdate(
-        { _id: id, user: req.user.id },
+        filter,
         { quantity: parsedQuantity },
         { new: true, runValidators: true }
       );
@@ -120,7 +124,7 @@ router.put('/:id', async (req, res) => {
       return res.json(updated);
     } else {
       const products = readProductsJSON();
-      const index = products.findIndex(p => p._id === id && p.userId === req.user.id);
+      const index = products.findIndex(p => p._id === id && (req.user.role === 'admin' || p.userId === req.user.id));
       if (index === -1) {
         return res.status(404).json({ error: "Product not found in local inventory storage." });
       }

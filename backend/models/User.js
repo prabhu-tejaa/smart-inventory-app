@@ -12,17 +12,21 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   }
 }, { timestamps: true });
 
 // Hash the password before saving
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function() {
   if (!this.isModified('password')) {
-    return next();
+    return;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 export default mongoose.model('User', UserSchema);
