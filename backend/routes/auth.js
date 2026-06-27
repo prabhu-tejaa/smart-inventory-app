@@ -135,14 +135,18 @@ router.put('/users/:id', requireAuth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied. Admins only.' });
     }
-    const { role } = req.body;
+    const { role, email, password } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    
     if (role) user.role = role;
+    if (email) user.email = email.toLowerCase();
+    if (password) user.password = password; // The pre-save hook will hash this
+
     await user.save();
-    res.json({ message: 'User updated successfully', user });
+    res.json({ message: 'User updated successfully', user: { id: user._id, email: user.email, role: user.role } });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

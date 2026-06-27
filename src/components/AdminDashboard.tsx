@@ -24,6 +24,9 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
   // New User Form State
   const [showAddUser, setShowAddUser] = useState(false);
   const [newUser, setNewUser] = useState({ email: '', password: '', role: 'user' });
+  
+  // Edit User Form State
+  const [editingUser, setEditingUser] = useState<any | null>(null);
 
   const fetchUsers = async () => {
     try {
@@ -99,6 +102,33 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
     }
   };
 
+  const handleEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    try {
+      const res = await fetch(`/api/auth/users/${editingUser._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          email: editingUser.email,
+          role: editingUser.role,
+          ...(editingUser.password ? { password: editingUser.password } : {})
+        })
+      });
+      if (res.ok) {
+        setEditingUser(null);
+        fetchUsers();
+      } else {
+        alert("Failed to update user: " + (await res.json()).message);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const deleteProduct = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
@@ -154,10 +184,10 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
   const totalProfit = sales.reduce((sum, sale) => sum + sale.profit, 0);
 
   return (
-    <div className="h-screen max-h-screen w-full flex bg-slate-50 overflow-hidden font-sans">
+    <div className="min-h-screen md:h-screen md:max-h-screen w-full flex flex-col md:flex-row bg-slate-50 md:overflow-hidden font-sans">
       
       {/* Sidebar Navigation */}
-      <div className="w-72 bg-[#0a0f1c] text-white flex flex-col shadow-2xl z-20 shrink-0">
+      <div className="w-full md:w-72 bg-[#0a0f1c] text-white flex flex-col shadow-2xl z-20 shrink-0">
         <div className="p-6 border-b border-slate-800 flex items-center gap-3">
           <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
             <ShieldAlert className="w-5 h-5 text-indigo-400" />
@@ -168,14 +198,14 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
           </div>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto">
           {[
             { id: 'users', icon: Users, label: 'Manage Users' }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${
+              className={`flex-1 md:w-full flex items-center justify-center md:justify-start gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm whitespace-nowrap ${
                 activeTab === tab.id 
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
                   : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
@@ -198,7 +228,7 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-10 relative">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-10 relative">
         <AnimatePresence mode="wait">
           
           {/* USERS TAB */}
@@ -245,8 +275,36 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-sm text-left">
+              {editingUser && (
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-200 mb-6 relative">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 rounded-t-2xl"></div>
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-900"><Edit2 className="w-5 h-5"/> Edit User</h3>
+                  <form onSubmit={handleEditUser} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Email Address</label>
+                      <input type="email" value={editingUser.email} onChange={e => setEditingUser({...editingUser, email: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" required />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">New Password (Optional)</label>
+                      <input type="password" placeholder="Leave blank to keep current" value={editingUser.password || ''} onChange={e => setEditingUser({...editingUser, password: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500" minLength={6} />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="text-[11px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">Role</label>
+                      <select value={editingUser.role} onChange={e => setEditingUser({...editingUser, role: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:border-indigo-500 bg-white">
+                        <option value="user">USER</option>
+                        <option value="admin">ADMIN</option>
+                      </select>
+                    </div>
+                    <div className="sm:col-span-1 flex justify-end gap-2">
+                      <button type="button" onClick={() => setEditingUser(null)} className="w-1/2 px-4 py-2.5 bg-slate-100 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors">Cancel</button>
+                      <button type="submit" className="w-1/2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">Save</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+                <table className="w-full text-sm text-left min-w-[600px]">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-xs tracking-wider">
                     <tr>
                       <th className="px-6 py-4">Account Email</th>
@@ -273,9 +331,14 @@ export default function AdminDashboard({ token, onExit, products, sales, refresh
                         </td>
                         <td className="px-6 py-4 text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-right">
-                          <button onClick={() => deleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex justify-end gap-1">
+                            <button onClick={() => setEditingUser(u)} className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit User">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => deleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete User">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

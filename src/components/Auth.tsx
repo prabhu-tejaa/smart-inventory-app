@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package, Lock, Mail, UserPlus, LogIn, AlertTriangle, TrendingUp, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -76,29 +76,21 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
             System Ready
           </div>
           
-          <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight">
-            Inventory management,<br/>
-            <motion.span 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="text-slate-400 font-light"
-            >
-              reduced to the essentials.
-            </motion.span>
+          <h1 className="text-4xl xl:text-5xl font-display font-bold mb-6 tracking-tight text-white leading-tight min-h-[120px]">
+            <TypewriterText text="Inventory management, reduced to the essentials." delay={500} />
           </h1>
           
           <motion.div 
             initial={{ width: 0 }}
             animate={{ width: "40px" }}
-            transition={{ delay: 1.2, duration: 0.5 }}
+            transition={{ delay: 2.5, duration: 0.5 }}
             className="h-1 bg-indigo-500 rounded-full mb-8"
           />
 
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
+            transition={{ delay: 3, duration: 1 }}
             className="text-slate-500 text-lg font-light max-w-md"
           >
             Sign in to access your secure command center.
@@ -226,5 +218,39 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
         </div>
       </div>
     </div>
-  );
 }
+
+// A professional typing animation component
+const TypewriterText = ({ text, delay = 0, className = "" }: { text: string; delay?: number; className?: string }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [typingComplete, setTypingComplete] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    let timer: NodeJS.Timeout;
+    
+    const startTyping = () => {
+      timer = setInterval(() => {
+        setDisplayedText(text.slice(0, i + 1));
+        i++;
+        if (i > text.length) {
+          clearInterval(timer);
+          setTypingComplete(true);
+        }
+      }, 40); // Professional, fast typing speed
+    };
+
+    const delayTimer = setTimeout(startTyping, delay);
+    return () => {
+      clearTimeout(delayTimer);
+      clearInterval(timer);
+    };
+  }, [text, delay]);
+
+  return (
+    <span className={className}>
+      {displayedText}
+      {!typingComplete && <span className="animate-pulse ml-1 text-indigo-500 font-mono">_</span>}
+    </span>
+  );
+};

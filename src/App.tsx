@@ -379,7 +379,7 @@ export default function App() {
   }
 
   return (
-    <div id="smart-inventory-app" className="h-screen max-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
+    <div id="smart-inventory-app" className="min-h-screen md:h-screen md:max-h-screen md:overflow-hidden bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
       
       {/* Dynamic Alert Banner Toast Overlay Stack */}
       <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
@@ -428,9 +428,9 @@ export default function App() {
               <ShieldAlert className="w-4 h-4" /> Admin Console
             </button>
           )}
-          <button onClick={() => { setActiveTab('profile'); setIsAdminMode(false); }} className="text-xs font-semibold text-indigo-600 flex items-center gap-1 hover:text-indigo-800">
+          <div className="text-xs font-semibold text-slate-700 flex items-center gap-1 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200">
             <User className="w-4 h-4" /> {user.email}
-          </button>
+          </div>
           <button onClick={handleLogout} className="text-xs font-semibold text-slate-500 flex items-center gap-1 hover:text-slate-800">
             <LogOut className="w-4 h-4" /> Logout
           </button>
@@ -449,7 +449,7 @@ export default function App() {
         />
       ) : (
       <>
-      <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5 overflow-visible md:overflow-hidden">
         
         {/* MOBILE OVERLAY REMOVED FOR PROD */}
 
@@ -663,8 +663,8 @@ export default function App() {
             </div>
 
             {/* LIVE DENSITY TABLE CONTAINER */}
-            <div className="flex-1 overflow-auto min-h-0" id="inventory-data-table-view">
-              <table className="w-full text-left border-collapse">
+            <div className="flex-1 overflow-x-auto overflow-y-auto min-h-0" id="inventory-data-table-view">
+              <table className="w-full text-left border-collapse min-w-[850px]">
                 <thead>
                   <tr className="border-b border-[#e2e8f0] bg-slate-50 text-[11px] font-display font-semibold uppercase tracking-wider text-slate-500">
                     <th className="py-3 px-4">Item details</th>
@@ -1108,8 +1108,6 @@ export default function App() {
                     </form>
                   </motion.div>
                 )}
-
-                {activeTab === 'profile' && <Profile user={user} token={token} />}
 
                 {/* TAB 3: TODAY'S SALES TRANSACTION LOGS */}
                 {activeTab === 'sales-log' && (
