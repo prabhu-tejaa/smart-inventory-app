@@ -7,7 +7,8 @@ const SaleSchema = new mongoose.Schema({
   buyPrice: { type: Number, required: true },
   sellPrice: { type: Number, required: true },
   profit: { type: Number, required: true },
-  soldAt: { type: Date, default: Date.now }
+  soldAt: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 const Sale = mongoose.models.Sale || mongoose.model('Sale', SaleSchema);

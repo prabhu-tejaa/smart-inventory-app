@@ -8,7 +8,8 @@ const ProductSchema = new mongoose.Schema({
   quantity: { type: Number, required: true, min: 0 },
   expiryDate: { type: String, required: true },
   lowStockThreshold: { type: Number, default: 5 },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);

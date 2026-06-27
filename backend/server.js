@@ -3,6 +3,7 @@ import express from 'express';
 import { connectDB, isMongoConnected } from './config/db.js';
 import productsRoute from './routes/products.js';
 import salesRoute from './routes/sales.js';
+import authRoute from './routes/auth.js';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get('/api/db-status', (req, res) => {
 });
 
 // Mount APIs
+app.use('/api/auth', authRoute);
 app.use('/api/products', productsRoute);
 app.use('/api/sales', salesRoute);
 

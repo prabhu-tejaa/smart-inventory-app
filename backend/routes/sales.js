@@ -2,17 +2,20 @@ import express from 'express';
 import { isMongoConnected, readProductsJSON, writeProductsJSON, readSalesJSON, writeSalesJSON } from '../config/db.js';
 import Product from '../models/Product.js';
 import Sale from '../models/Sale.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
+router.use(requireAuth);
 
 // GET /api/sales - Fetch complete transactional checkout sales sorted descendingly by soldAt
 router.get('/', async (req, res) => {
   try {
     if (isMongoConnected()) {
-      const sales = await Sale.find({}).sort({ soldAt: -1 });
+      const sales = await Sale.find({ user: req.user.id }).sort({ soldAt: -1 });
       return res.json(sales);
     } else {
-      const sales = readSalesJSON();
+      let sales = readSalesJSON();
+      sales = sales.filter(s => s.userId === req.user.id);
       // Sort descendingly by soldAt datetime
       sales.sort((a, b) => {
         const dateA = new Date(a.soldAt || 0);
@@ -42,7 +45,7 @@ router.post('/', async (req, res) => {
 
     if (isMongoConnected()) {
       // Sync on MongoDB Atlas database
-      const product = await Product.findById(productId);
+      const product = await Product.findOne({ _id: productId, user: req.user.id });
       if (!product) {
         return res.status(404).json({ error: "Product not found in Atlas database." });
       }
@@ -68,7 +71,8 @@ router.post('/', async (req, res) => {
         buyPrice: product.buyPrice,
         sellPrice: product.sellPrice,
         profit,
-        soldAt: new Date()
+        soldAt: new Date(),
+        user: req.user.id
       });
 
       const savedSale = await newSale.save();
@@ -77,7 +81,7 @@ router.post('/', async (req, res) => {
     } else {
       // Local flat-file fallback transaction
       const products = readProductsJSON();
-      const pIndex = products.findIndex(p => p._id === productId);
+      const pIndex = products.findIndex(p => p._id === productId && p.userId === req.user.id);
       if (pIndex === -1) {
         return res.status(404).json({ error: "Product not found in custom offline inventory." });
       }
@@ -105,7 +109,8 @@ router.post('/', async (req, res) => {
         buyPrice: product.buyPrice,
         sellPrice: product.sellPrice,
         profit,
-        soldAt: new Date().toISOString()
+        soldAt: new Date().toISOString(),
+        userId: req.user.id
       };
       
       sales.push(newSale);

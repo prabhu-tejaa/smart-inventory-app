@@ -21,6 +21,24 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Product, Sale, DBStatus } from './types';
 
 export default function App() {
+  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || 'null'));
+
+  const handleLogin = (newToken, newUser) => {
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken('');
+    setUser(null);
+  };
+
+  const authHeaders = { 'Authorization': `Bearer ${token}` };
   // --- STATE STORES ---
   const [products, setProducts] = useState<Product[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -69,7 +87,8 @@ export default function App() {
   const fetchInventory = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products', {
+      headers: { ...authHeaders, 'Content-Type': 'application/json' }, headers: authHeaders });
       if (!res.ok) throw new Error("Could not fetch products");
       const data = await res.json();
       setProducts(data);
@@ -82,7 +101,8 @@ export default function App() {
 
   const fetchSalesLogs = async () => {
     try {
-      const res = await fetch('/api/sales');
+      const res = await fetch('/api/sales', {
+      headers: { ...authHeaders, 'Content-Type': 'application/json' }, headers: authHeaders });
       if (!res.ok) throw new Error("Could not fetch sales logs");
       const data = await res.json();
       setSales(data);
@@ -93,7 +113,7 @@ export default function App() {
 
   const fetchDBStatus = async () => {
     try {
-      const res = await fetch('/api/db-status');
+      const res = await fetch('/api/db-status', { headers: token ? authHeaders : {} });
       if (!res.ok) throw new Error("Could not fetch DB health check");
       const data = await res.json();
       setDbStatus(data);
@@ -136,7 +156,11 @@ export default function App() {
       const pad = (n: number) => n.toString().padStart(2, '0');
       setLiveTime(`${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
     }, 1000);
-    return () => clearInterval(interval);
+    if (!token || !user) {
+    return <Auth onLogin={handleLogin} dbStatus={dbStatus} />;
+  }
+
+  return () => clearInterval(interval);
   }, []);
 
   // Indian Rupee formatting utility
@@ -256,6 +280,7 @@ export default function App() {
 
     try {
       const res = await fetch('/api/products', {
+      headers: { ...authHeaders, 'Content-Type': 'application/json' },
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -307,6 +332,7 @@ export default function App() {
 
     try {
       const res = await fetch('/api/sales', {
+      headers: { ...authHeaders, 'Content-Type': 'application/json' },
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -380,6 +406,15 @@ export default function App() {
           <span className="font-display font-medium tracking-tight text-slate-900 text-base md:text-lg">
             Smart Inventory
           </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button onClick={() => setActiveTab('profile')} className="text-xs font-semibold text-indigo-600 flex items-center gap-1 hover:text-indigo-800">
+            <User className="w-4 h-4" /> {user.email}
+          </button>
+          <button onClick={handleLogout} className="text-xs font-semibold text-slate-500 flex items-center gap-1 hover:text-slate-800">
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
         </div>
 
       </header>
@@ -1043,6 +1078,8 @@ export default function App() {
                     </form>
                   </motion.div>
                 )}
+
+                {activeTab === 'profile' && <Profile user={user} token={token} />}
 
                 {/* TAB 3: TODAY'S SALES TRANSACTION LOGS */}
                 {activeTab === 'sales-log' && (

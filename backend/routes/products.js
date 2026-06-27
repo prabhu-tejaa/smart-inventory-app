@@ -1,17 +1,20 @@
 import express from 'express';
 import { isMongoConnected, readProductsJSON, writeProductsJSON } from '../config/db.js';
 import Product from '../models/Product.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
+router.use(requireAuth);
 
 // GET /api/products - Fetch all products ordered ascendingly by expiryDate
 router.get('/', async (req, res) => {
   try {
     if (isMongoConnected()) {
-      const products = await Product.find({}).sort({ expiryDate: 1 });
+      const products = await Product.find({ user: req.user.id }).sort({ expiryDate: 1 });
       return res.json(products);
     } else {
-      const products = readProductsJSON();
+      let products = readProductsJSON();
+      products = products.filter(p => p.userId === req.user.id);
       // Sort ascendingly by expiryDate
       products.sort((a, b) => {
         const dateA = a.expiryDate || '';
@@ -65,7 +68,8 @@ router.post('/', async (req, res) => {
         sellPrice: parsedSellPrice,
         quantity: parsedQuantity,
         expiryDate,
-        lowStockThreshold: parsedThreshold
+        lowStockThreshold: parsedThreshold,
+        user: req.user.id
       });
       const saved = await newProduct.save();
       return res.status(201).json(saved);
@@ -80,7 +84,8 @@ router.post('/', async (req, res) => {
         quantity: parsedQuantity,
         expiryDate,
         lowStockThreshold: parsedThreshold,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        userId: req.user.id
       };
       products.push(newProduct);
       writeProductsJSON(products);
@@ -104,8 +109,8 @@ router.put('/:id', async (req, res) => {
     }
 
     if (isMongoConnected()) {
-      const updated = await Product.findByIdAndUpdate(
-        id,
+      const updated = await Product.findOneAndUpdate(
+        { _id: id, user: req.user.id },
         { quantity: parsedQuantity },
         { new: true, runValidators: true }
       );
@@ -115,7 +120,7 @@ router.put('/:id', async (req, res) => {
       return res.json(updated);
     } else {
       const products = readProductsJSON();
-      const index = products.findIndex(p => p._id === id);
+      const index = products.findIndex(p => p._id === id && p.userId === req.user.id);
       if (index === -1) {
         return res.status(404).json({ error: "Product not found in local inventory storage." });
       }
