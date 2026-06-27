@@ -371,6 +371,10 @@ export default function App() {
     triggerToast(`Populated checkout console for "${prod.name}"`, "info");
   };
 
+  if (!token || !user) {
+    return <Auth onLogin={handleLogin} dbStatus={dbStatus} />;
+  }
+
   return (
     <div id="smart-inventory-app" className="min-h-screen bg-[#f8fafc] text-[#1e293b] flex flex-col font-sans select-none antialiased">
       
