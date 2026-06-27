@@ -1,0 +1,6 @@
+{
+  "name": "Smart Inventory & Expiry Management System",
+  "description": "A high-performance modern dashboard custom-tailored for small shopkeepers featuring analytics, transaction log, real-time stock and expiry alerts, and a resilient database failover engine.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

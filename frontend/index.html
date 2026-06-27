@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Inventory & Expiry Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Tailwind CSS Play CDN for neat style rendering -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+    }
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-[#1e293b] flex flex-col antialiased">
+
+  <!-- HEADER COMPONENT -->
+  <header class="h-[60px] bg-white border-b border-[#e2e8f0] px-6 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-2">
+      <div class="p-1.5 bg-slate-900 text-white rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+      </div>
+      <h1 class="font-display font-medium tracking-tight text-slate-900 text-base md:text-lg">Smart Inventory System</h1>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <div id="db-status-badge" class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full border bg-amber-50 text-amber-750 border-amber-200 text-xs font-mono font-semibold">
+        OFFLINE FAILOVER
+      </div>
+      <div class="text-xs font-mono bg-slate-900 py-1.5 px-3 rounded-md text-slate-200">
+        2026-06-27 UTC
+      </div>
+    </div>
+  </header>
+
+  <!-- ROOT MAIN DASHBOARD -->
+  <main class="flex-1 max-w-[1500px] w-full mx-auto p-4 md:p-6 flex flex-col gap-5">
+    
+    <!-- CRITICAL ALERTS BANNER -->
+    <div id="critical-alert-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
+      <div class="flex items-start gap-3">
+        <div class="p-2 bg-amber-100 text-amber-800 rounded-lg shrink-0">
+          ⚠️
+        </div>
+        <div>
+          <h3 class="font-display font-semibold text-amber-900 text-sm">Action Items Pending</h3>
+          <p class="text-xs text-amber-800 mt-0.5">Expired inventory items or units falling below safety levels have been auto-flagged.</p>
+        </div>
+      </div>
+      <button onclick="document.getElementById('critical-alert-banner').style.display='none'" class="text-slate-400 hover:text-slate-600 text-xs">Dismiss</button>
+    </div>
+
+    <!-- METRICS OVERVIEW -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs">
+        <p class="text-xs text-slate-500 font-medium uppercase">Total Products</p>
+        <p id="metric-total-items" class="font-display font-medium text-2xl text-slate-900 mt-1 font-mono">0</p>
+      </div>
+      <div class="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs">
+        <p class="text-xs text-slate-500 font-medium uppercase">Expired/Soon</p>
+        <p id="metric-expired-items" class="font-display font-medium text-2xl text-amber-600 mt-1 font-mono">0</p>
+      </div>
+      <div class="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs">
+        <p class="text-xs text-slate-500 font-medium uppercase">Low Stock Alerts</p>
+        <p id="metric-low-stocks" class="font-display font-medium text-2xl text-red-650 mt-1 font-mono">0</p>
+      </div>
+      <div class="bg-white border border-[#e2e8f0] p-4 rounded-xl shadow-2xs">
+        <p class="text-xs text-slate-500 font-medium uppercase">Today's Profit</p>
+        <p id="metric-returns" class="font-display font-semibold text-2xl text-emerald-600 mt-1 font-mono">₹0.00</p>
+      </div>
+    </div>
+
+    <!-- GRIDSPLIT CONTROLS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      
+      <!-- INVENTORY MANAGEMENT PANEL (2 Cols Wide) -->
+      <div class="lg:col-span-2 bg-white border border-[#e2e8f0] rounded-xl shadow-2xs overflow-hidden flex flex-col">
+        <div class="p-4 bg-slate-50 border-b border-[#e2e8f0] flex flex-col md:flex-row gap-3 items-center justify-between">
+          <input id="txt-search" type="text" placeholder="Filter items by name or category..." class="bg-white text-xs border border-slate-200 px-3 py-2 rounded-lg w-full md:w-72 focus:outline-none">
+          <select id="sel-filter" class="bg-white border border-slate-200 text-xs py-1.5 px-3 rounded-lg focus:outline-none">
+            <option value="All items">📋 All shelf stock items</option>
+            <option value="Expired details">🚨 Expired items</option>
+            <option value="Expiring soon">⏳ Expiring inside 7d</option>
+            <option value="Low stocks">⚠️ Below low thresholds</option>
+            <option value="Status: OK">✅ Perfect OK Status</option>
+          </select>
+        </div>
+
+        <div class="overflow-x-auto min-h-[350px]">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-[#e2e8f0] text-[11px] font-semibold text-slate-500 uppercase">
+                <th class="p-3">Product Name</th>
+                <th class="p-3">Category</th>
+                <th class="p-3 text-right">In-Stock Qty</th>
+                <th class="p-3 text-right">Unit Buy</th>
+                <th class="p-3 text-right">Unit Sell</th>
+                <th class="p-3">Expiry</th>
+                <th class="p-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbl-inventory-body" class="divide-y divide-[#e2e8f0]">
+              <tr>
+                <td colspan="7" class="p-10 text-center text-slate-400">Loading shop datasets...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE TABS RIGHT PANEL (1 Col Wide) -->
+      <div class="bg-white border border-[#e2e8f0] rounded-xl shadow-2xs overflow-hidden flex flex-col">
+        <div class="flex border-b border-[#e2e8f0] bg-slate-50">
+          <button onclick="switchTab('tab-new-entry')" id="btn-tab-new" class="flex-1 py-3 text-xs font-semibold text-slate-900 border-b-2 border-slate-900 bg-white">Add Product</button>
+          <button onclick="switchTab('tab-pos-billing')" id="btn-tab-pos" class="flex-1 py-3 text-xs font-semibold text-slate-550 border-b-2 border-transparent">Record Sale</button>
+        </div>
+
+        <!-- FORM INTERFACES -->
+        <div class="p-5 flex-1">
+          
+          <!-- TAB 1 Form -->
+          <div id="tab-new-entry" class="space-y-4">
+            <h3 class="font-display font-bold text-slate-900 text-sm">Inventory Entry</h3>
+            <form id="frm-add-product" class="space-y-3">
+              <div>
+                <label class="text-[11px] font-medium text-slate-600 block mb-1">Product Title *</label>
+                <input type="text" id="add-val-name" required placeholder="e.g. Fortune Oil 1L" class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+              </div>
+              <div>
+                <label class="text-[11px] font-medium text-slate-600 block mb-1">Category *</label>
+                <input type="text" id="add-val-category" required placeholder="Dairy, Edible Oils..." class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] font-medium text-slate-600 block mb-1">Buy cost (₹) *</label>
+                  <input type="number" id="add-val-buy" required min="0" placeholder="0.00" class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[11px] font-medium text-slate-600 block mb-1">Sell premium (₹) *</label>
+                  <input type="number" id="add-val-sell" required min="0" placeholder="0.00" class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] font-medium text-slate-600 block mb-1">Supply units *</label>
+                  <input type="number" id="add-val-qty" required min="1" placeholder="50" class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-[11px] font-medium text-slate-600 block mb-1">Low threshold</label>
+                  <input type="number" id="add-val-threshold" value="5" min="1" class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none">
+                </div>
+              </div>
+              <div>
+                <label class="text-[11px] font-medium text-slate-600 block mb-1">Expiry date *</label>
+                <input type="date" id="add-val-expiry" required class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none font-mono">
+              </div>
+              <button type="submit" class="w-full py-2.5 bg-slate-900 text-white rounded-lg text-xs font-semibold font-display hover:bg-slate-800">Add Item Batch</button>
+            </form>
+          </div>
+
+          <!-- TAB 2 Form -->
+          <div id="tab-pos-billing" class="hidden space-y-4">
+            <h3 class="font-display font-bold text-slate-900 text-sm">Storefront Checkout POS</h3>
+            <form id="frm-pos-sale" class="space-y-4">
+              <div>
+                <label class="text-[11px] font-medium text-slate-600 block mb-1">Select SKU Product *</label>
+                <select id="pos-sel-product" required class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none bg-white">
+                  <option value="">-- Select --</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-medium text-slate-600 block mb-1">Sale Units Qty *</label>
+                <input type="number" id="pos-val-qty" value="1" min="1" required class="w-full text-xs border border-slate-200 p-2 rounded-lg focus:outline-none font-mono">
+              </div>
+
+              <!-- LIVED ARE-YOU-SURE DETAILS -->
+              <div id="pos-estimates-widget" class="hidden p-3 border border-slate-200 rounded-lg bg-slate-50 font-mono text-[11px] space-y-2">
+                <div class="flex justify-between">
+                  <span>In stock limit:</span>
+                  <span id="est-instock" class="font-bold">0</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Grand Total:</span>
+                  <span id="est-total" class="font-bold text-slate-900">₹0.00</span>
+                </div>
+                <div class="flex justify-between border-t border-dashed pt-1.5 font-sans">
+                  <span class="text-slate-500">Expected Profit:</span>
+                  <span id="est-profit" class="font-mono font-bold text-emerald-600">₹0.00</span>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-2.5 bg-emerald-600 text-white text-xs font-semibold rounded-lg hover:bg-emerald-500 font-display">Confirm Sale & Deduct Stock</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t py-4 text-center text-[11px] text-slate-400 font-mono">
+    Smart Inventory Platform. Resilient DB Failover.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
