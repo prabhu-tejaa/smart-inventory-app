@@ -202,7 +202,7 @@ export default function Auth({ onLogin, dbStatus }: AuthProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-6 left-0 right-0 text-center text-[11px] text-slate-400 font-sans tracking-wide">
+      <div className="absolute bottom-6 right-6 text-right text-[11px] text-slate-400 font-sans tracking-wide">
         &copy; {new Date().getFullYear()} Smart Inventory App
       </div>
     </div>
